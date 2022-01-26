@@ -4,43 +4,7 @@
   <head>
     <meta charset="utf-8">
     <title>Speech Recognition demo</title>
-    <script type="module">
-      import SpeechRecognitionHelper from './speech-recognition-helper.js';
-
-      window.addEventListener('load', () => {
-        const startButton = document.getElementById('start');
-        const inputElement = document.querySelector('.input');
-        const speech = new SpeechRecognitionHelper('nl-NL');
-
-        if ( speech.available ) {
-          startButton.style.display = 'block';
-          startButton.addEventListener('click', async () => {
-            if ( speech.listening ) {
-              speech.stop();
-              startButton.classList.remove('active');
-              const inputText = inputElement.innerText;
-              document.querySelectorAll('.input .final, .input .probable, .input .interim')
-                      .forEach(elm => elm.remove());
-              inputElement.innerText = inputText;
-            } else {
-              speech.setSpeechHandler(text => {
-                document.querySelector('#input .final').innerHTML = text.final;
-                document.querySelector('#input .probable').innerHTML = text.probable;
-                document.querySelector('#input .interim').innerHTML = text.interim;
-              });
-
-              inputElement.innerHTML += `
-                <span class="final"></span>
-                <span class="probable"></span>
-                <span class="interim"></span>
-              `;
-              speech.start();
-              startButton.classList.add('active');
-            }
-          });
-        }
-      });
-    </script>
+    <script type="text/javascript" src="./index.js"></script>
 
     <style media="screen">
       html, body {
@@ -80,7 +44,7 @@
         margin: 2px;
         padding: 2px;
       }
-      button {
+      .text button {
         position: absolute;
         top: -1px;
         right: -1px;
@@ -88,8 +52,11 @@
         border-radius: 0;
         border-bottom-left-radius: 3px;
       }
-      button.active {
+      .text button.active {
         background-color: red;
+      }
+      p {
+        text-align: center;
       }
     </style>
   </head>
@@ -101,6 +68,10 @@
       <button id="start" style="display: none;">🎤</button>
       <div class="input" contenteditable="true"></div>
     </div>
+
+    <p><button id="summarize">↓ Generate summary ↓</button></p>
+
+    <div class="text" id="summary"></div>
 
     <p><i>Only tested in Chrome</i></p>
   </body>
