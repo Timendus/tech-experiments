@@ -1,0 +1,9 @@
+{
+  "name": "Speech recognition demo",
+  "devDependencies": {
+    "http-server": "^14.1.0"
+  },
+  "scripts": {
+    "start": "http-server ."
+  }
+}
