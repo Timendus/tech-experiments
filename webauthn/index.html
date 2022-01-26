@@ -6,8 +6,8 @@
     <h1>WebAuthN demo</h1>
     <p>Hier een lijst met geldige security tokens!</p>
     <textarea id="credentials" cols="80" rows="3"></textarea>
-    <button onclick="register();">registreer</button>
-    <button onclick="validate();">controleer</button>
+    <button onclick="registerToken();">registreer</button>
+    <button onclick="validateToken();">controleer</button>
   </body>
 </html>
 
@@ -21,7 +21,7 @@
   const challenge =  stringToArrayBuffer("abcdefgh");
   const timeout = 60 * 4 * 1000;
 
-  async function register() {
+  async function registerToken() {
     const registerResult = await window.navigator.credentials.create({
       publicKey: {
         rp: {
@@ -47,7 +47,7 @@
     return credentials;
   }
   
-  function validate() {
+  function validateToken() {
     const credentials = document.getElementById('credentials').value;
     const validateResult = await window.navigator.credentials.get({
       publicKey: {
