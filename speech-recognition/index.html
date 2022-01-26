@@ -18,7 +18,7 @@
             if ( speech.listening ) {
               speech.stop();
               startButton.classList.remove('active');
-              inputText = inputElement.innerText;
+              const inputText = inputElement.innerText;
               document.querySelectorAll('.input .final, .input .probable, .input .interim')
                       .forEach(elm => elm.remove());
               inputElement.innerText = inputText;
