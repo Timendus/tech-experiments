@@ -1,0 +1,31 @@
+<html>
+  <head>
+  </head>
+  <body>
+  </body>
+</html>
+
+<script>
+  async function screenshot() {
+    await new Promise((resolve) => {
+      const html2canvasScript = document.createElement("script");
+      html2canvasScript.onload = resolve;
+      html2canvasScript.src =
+        "https://html2canvas.hertzen.com/dist/html2canvas.min.js";
+      document.head.appendChild(html2canvasScript);
+    });
+
+    const canvas = await html2canvas(document.body);
+    const pngUrl = canvas.toDataURL();
+    const image = document.createElement("img");
+    image.src = pngUrl;
+
+    const newWindow = window.open("");
+    newWindow.document.write(image.outerHTML)
+  }
+
+  const button  = document.createElement('button');
+  button.onclick = screenshot;
+  button.innerText = 'Screenshot';
+  document.body.insertBefore(button, document.body.firstChild);
+</script>

@@ -1,0 +1,34 @@
+<html>
+  <head> </head>
+  <body>
+  </body>
+</html>
+
+<script>
+  async function screenshot() {
+    const stream = await navigator.mediaDevices.getDisplayMedia({
+      preferCurrentTab: true,
+      video: { cursor: "always" },
+      audio: false,
+    });
+    const track = stream.getVideoTracks()[0];
+    const imageCapture = new ImageCapture(track);
+    const frame = await imageCapture.grabFrame();
+    track.stop();
+
+
+    const canvas = document.createElement("canvas");
+    canvas.width = frame.width;
+    canvas.height = frame.height;
+    canvas.getContext('2d').drawImage(frame, 0, 0);
+    const url = canvas.toDataURL();
+    const image = document.createElement("img");
+    image.src = url;
+    const newWindow = window.open("");
+    newWindow.document.write(image.outerHTML)
+  }
+  const button  = document.createElement('button');
+  button.onclick = screenshot;
+  button.innerText = 'Screenshot';
+  document.body.insertBefore(button, document.body.firstChild);
+</script>
