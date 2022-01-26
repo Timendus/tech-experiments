@@ -16,14 +16,14 @@
 </html>
 
 <script>
+  const username = "demo-user";
+  const challenge =  stringToArrayBuffer("abcdefgh");
+  const timeout = 60 * 4 * 1000;
+
   function stringToArrayBuffer(str) {
     const encoder = new TextEncoder();
     return encoder.encode(str);
   }
-
-  const username = "demo-user";
-  const challenge =  stringToArrayBuffer("abcdefgh");
-  const timeout = 60 * 4 * 1000;
 
   async function registerToken() {
     const registerResult = await window.navigator.credentials.create({
@@ -47,24 +47,22 @@
       },
     });
     document.getElementById('credentials').value = registerResult.id;
-    console.log(credentials);
-    return credentials;
+    console.log(registerResult);
+    return registerResult;
   }
   
-  function validateToken() {
+  async function validateToken() {
     const credentials = document.getElementById('credentials').value;
     const validateResult = await window.navigator.credentials.get({
       publicKey: {
         challenge: challenge,
         timeout: timeout,
-        allowCredentials: [
-          {
-            type: 'public-key',
-            id: credentials
-          }
-        ]
+        allowCredentials: [{
+          type: 'public-key',
+          id: credentials
+        }],
       }
-    })
+    });
     console.log({ validateResult });
   }
 </script>
