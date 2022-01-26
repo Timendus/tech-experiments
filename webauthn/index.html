@@ -133,7 +133,7 @@
         }],
       }
     });
-    if(validateResult.rawId == credential) {
+    if(validateResult.id == document.getElementById('credential').value) {
       document.getElementById('validator').classList.add('green');
       document.getElementById('validator').classList.remove('red');
     } else {
