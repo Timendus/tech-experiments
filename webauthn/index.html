@@ -1,0 +1,39 @@
+<html>
+  <head> </head>
+  <body></body>
+</html>
+
+<script>
+  function stringToArrayBuffer(str) {
+    const encoder = new TextEncoder();
+    return encoder.encode(str);
+  }
+
+  async function run() {
+    const username = "bobvanderlinden";
+    const challenge =  stringToArrayBuffer("abc");
+    const credentials = await window.navigator.credentials.create({
+      publicKey: {
+        rp: {
+          id: window.location.hostname,
+          name: window.location.hostname,
+        },
+        user: {
+          displayName: username,
+          id: stringToArrayBuffer(username),
+          name: username,
+        },
+        challenge: challenge,
+        pubKeyCredParams: [
+          { type: "public-key", alg: -7 },
+          { type: "public-key", alg: -257 },
+        ],
+        timeout: 60 * 4 * 1000,
+        attestation: "none",
+      },
+    });
+    // const credentials = await window.navigator.credentials.get({});
+    // console.log
+  }
+  run();
+</script>
