@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+  <head>
+    <meta charset="utf-8">
+    <title>Speech Recognition demo</title>
+    <script type="module">
+      import SpeechRecognitionHelper from './speech-recognition-helper.js';
+
+      window.addEventListener('load', () => {
+        const startButton = document.getElementById('start');
+        const inputElement = document.querySelector('.input');
+        const speech = new SpeechRecognitionHelper('nl-NL');
+
+        if ( speech.available ) {
+          startButton.style.display = 'block';
+          startButton.addEventListener('click', async () => {
+            if ( speech.listening ) {
+              speech.stop();
+              startButton.classList.remove('active');
+              inputText = inputElement.innerText;
+              document.querySelectorAll('.input .final, .input .probable, .input .interim')
+                      .forEach(elm => elm.remove());
+              inputElement.innerText = inputText;
+            } else {
+              speech.setSpeechHandler(text => {
+                document.querySelector('#input .final').innerHTML = text.final;
+                document.querySelector('#input .probable').innerHTML = text.probable;
+                document.querySelector('#input .interim').innerHTML = text.interim;
+              });
+
+              inputElement.innerHTML += `
+                <span class="final"></span>
+                <span class="probable"></span>
+                <span class="interim"></span>
+              `;
+              speech.start();
+              startButton.classList.add('active');
+            }
+          });
+        }
+      });
+    </script>
+
+    <style media="screen">
+      html, body {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+        font-family: Tahoma, Arial, sans-serif;
+      }
+      h1, h2 {
+        margin: 1em;
+      }
+      .text {
+        /* background-color: #F5F5F5; */
+        border: 1px solid #DDD;
+        padding: 1em;
+        margin: 1em;
+        max-height: 20vh;
+        min-height: 3em;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        position: relative;
+      }
+      .text:focus-within {
+        outline: -webkit-focus-ring-color auto 1px;
+      }
+      .text .input:focus {
+        outline: none;
+      }
+      .interim {
+        font-style: italic;
+      }
+      .probable {
+        text-decoration: underline;
+      }
+      .subtitle {
+        background-color: rgba(0,0,0,0.1);
+        margin: 2px;
+        padding: 2px;
+      }
+      button {
+        position: absolute;
+        top: -1px;
+        right: -1px;
+        border: 1px solid #DDD;
+        border-radius: 0;
+        border-bottom-left-radius: 3px;
+      }
+      button.active {
+        background-color: red;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Speech Recognition demo</h1>
+
+    <div class="text" id="input">
+      <button id="start" style="display: none;">🎤</button>
+      <div class="input" contenteditable="true"></div>
+    </div>
+
+    <p><i>Only tested in Chrome</i></p>
+  </body>
+
+</html>
