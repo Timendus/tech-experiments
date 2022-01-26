@@ -4,7 +4,10 @@
   </head>
   <body>
     <h1>WebAuthN demo</h1>
-    <button onclick="run();">controle</button>
+    <p>Hier een lijst met geldige security tokens!</p>
+    <textarea id="credentials" cols="80" rows="3"></textarea>
+    <button onclick="register();">registreer</button>
+    <button onclick="validate();">controleer</button>
   </body>
 </html>
 
@@ -14,10 +17,12 @@
     return encoder.encode(str);
   }
 
-  async function run() {
-    const username = "bobvanderlinden";
-    const challenge =  stringToArrayBuffer("abc");
-    const credentials = await window.navigator.credentials.create({
+  const username = "demo-user";
+  const challenge =  stringToArrayBuffer("abcdefgh");
+  const timeout = 60 * 4 * 1000;
+
+  async function register() {
+    const registerResult = await window.navigator.credentials.create({
       publicKey: {
         rp: {
           id: window.location.hostname,
@@ -33,12 +38,29 @@
           { type: "public-key", alg: -7 },
           { type: "public-key", alg: -257 },
         ],
-        timeout: 60 * 4 * 1000,
+        timeout: timeout,
         attestation: "none",
       },
     });
-    // const credentials = await window.navigator.credentials.get({});
+    document.getElementById('credentials').value = registerResult.id;
     console.log(credentials);
+    return credentials;
   }
-  // run();
+  
+  function validate() {
+    const credentials = document.getElementById('credentials').value;
+    const validateResult = await window.navigator.credentials.get({
+      publicKey: {
+        challenge: challenge,
+        timeout: timeout,
+        allowCredentials: [
+          {
+            type: 'public-key',
+            id: credentials
+          }
+        ]
+      }
+    })
+    console.log({ validateResult });
+  }
 </script>
