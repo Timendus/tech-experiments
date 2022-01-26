@@ -120,17 +120,25 @@
   }
   
   async function validateToken() {
-    const credential = decodeBase64(document.getElementById('credentials').value);
+    const credential = decodeBase64(
+      document.getElementById('credential').value
+    );
     const validateResult = await window.navigator.credentials.get({
       publicKey: {
         challenge: challenge,
         timeout: timeout,
         allowCredentials: [{
           type: 'public-key',
-          id: credentials
+          id: credential
         }],
       }
     });
-    console.log({ validateResult });
+    if(validateResult.rawId == credential) {
+      document.getElementById('validator').classList.add('green');
+      document.getElementById('validator').classList.remove('red');
+    } else {
+      document.getElementById('validator').classList.add('red');
+      document.getElementById('validator').classList.remove('green');
+    }
   }
 </script>
