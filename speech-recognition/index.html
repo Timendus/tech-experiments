@@ -1,29 +1,48 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-
   <head>
-    <meta charset="utf-8">
-    <title>Speech Recognition demo</title>
+    <meta charset="utf-8" />
+    <title>Speech Report</title>
     <script type="text/javascript" src="./index.js"></script>
 
     <style media="screen">
-      html, body {
-        padding: 0;
+      @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans&display=swap");
+
+      :root {
+        --text-color: 240, 240, 240;
+      }
+
+      html,
+      body {
+        padding: 1em;
         margin: 0;
         box-sizing: border-box;
-        font-family: Tahoma, Arial, sans-serif;
+        font-family: IBM Plex Sans;
+        font-size: 13px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 20px;
+
+        width: 375px;
+        margin: auto;
+
+        background-color: #3e4459;
+        color: rgba(var(--text-color));
       }
-      h1, h2 {
-        margin: 1em;
+      h1,
+      h2 {
+        margin: 1em 0;
       }
       .text {
-        /* background-color: #F5F5F5; */
-        border: 1px solid #DDD;
+        background: rgba(118, 118, 128, 0.24);
+        border: 1px solid rgba(28, 28, 30, 0.4);
+        box-sizing: border-box;
+        border-radius: 10px;
+
+        border: 1px solid #ddd;
         padding: 1em;
-        margin: 1em;
-        max-height: 20vh;
-        min-height: 3em;
-        overflow-y: scroll;
+        margin: 1em 0;
+        overflow-y: visible;
         overflow-x: hidden;
         position: relative;
       }
@@ -34,46 +53,151 @@
         outline: none;
       }
       .interim {
-        font-style: italic;
+        color: rgba(var(--text-color), 0.5);
       }
       .probable {
-        text-decoration: underline;
+        color: rgba(var(--text-color), 0.8);
       }
       .subtitle {
-        background-color: rgba(0,0,0,0.1);
+        background-color: rgba(0, 0, 0, 0.1);
         margin: 2px;
         padding: 2px;
       }
-      .text button {
-        position: absolute;
-        top: -1px;
-        right: -1px;
-        border: 1px solid #DDD;
-        border-radius: 0;
-        border-bottom-left-radius: 3px;
+      .input-container {
+        position: relative;
       }
-      .text button.active {
-        background-color: red;
+
+      .input-container > .text {
+        grid-area: input;
       }
+
+      button.record {
+        float: right;
+        transform: translateY(-3px);
+
+        border-radius: 7px;
+
+        background-color: rgba(255, 255, 255, 0.2);
+        border: 0 none;
+        padding: 0;
+        margin: 0;
+      }
+
+      button.record.active {
+        transform: translateY(0px);
+        background-color: transparent;
+      }
+      button.record.active .mic {
+        fill: #e4436b;
+      }
+
       p {
+        text-align: center;
+      }
+
+      .icon {
+        grid-area: icon;
+      }
+
+      .label {
+        grid-area: label;
+      }
+
+      .tag-container {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        gap: 8px;
+        align-items: flex-start;
+      }
+
+      .tag {
+        display: grid;
+        width: fit-content;
+        padding-right: 12px;
+        grid-template-columns: min-content min-content;
+        grid-template-rows: minmax(28px, min-content);
+        grid-template-areas: "icon label";
+        border-radius: 14px;
+
+        border: none;
+        background-color: transparent;
+        cursor: pointer;
+        outline: none;
+      }
+
+      .tag.plus {
+        background-color: #d1f1fc;
+      }
+      .tag.check {
+        background-color: #89eed2;
+      }
+
+      .tag > .icon {
+        grid-area: icon;
+        justify-self: left;
+        align-self: center;
+      }
+
+      .tag > .label {
+        grid-area: label;
+        justify-self: center;
+        align-self: center;
+
+        white-space: nowrap;
+
+        font-family: IBM Plex Sans;
+        font-size: 13px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 20px;
+        letter-spacing: 0em;
         text-align: center;
       }
     </style>
   </head>
 
   <body>
-    <h1>Speech Recognition demo</h1>
+    <h1>Speech Report</h1>
 
-    <div class="text" id="input">
-      <button id="start" style="display: none;">🎤</button>
-      <div class="input" contenteditable="true"></div>
+    <div class="input-container">
+      <div class="text" id="input">
+        <button id="start" class="record">
+          <svg
+            width="39"
+            height="39"
+            viewBox="0 0 60 60"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect
+              class="face"
+              width="60"
+              height="60"
+              rx="14"
+              fill="white"
+              fill-opacity="0.2"
+            />
+            <path
+              class="mic"
+              d="M30 36.7998C33.7206 36.7998 36.7537 33.9021 36.7537 30.309V19.4522C36.7537 15.8977 33.7206 13 30 13C26.2794 13 23.2463 15.8977 23.2463 19.4522V30.3476C23.2463 33.9021 26.2794 36.7998 30 36.7998Z"
+              fill="white"
+            />
+            <path
+              class="mic"
+              d="M39.7868 26.3687H37.5221V28.6868H38.5735V31.8936C38.5735 34.9072 34.7316 38.539 30 38.539C25.2684 38.539 21.4265 34.8686 21.4265 30.3482V28.6868H22.4375V26.3687H20.2132C19.5257 26.3687 19 26.8709 19 27.5277V30.3482C19 35.7572 23.2868 40.2004 28.7868 40.7799V44.6822H25.1875C24.5 44.6822 23.9743 45.1844 23.9743 45.8412C23.9743 46.4981 24.5 47.0003 25.1875 47.0003H34.8125C35.5 47.0003 36.0257 46.4981 36.0257 45.8412C36.0257 45.1844 35.5 44.6822 34.8125 44.6822H31.2132V40.7799C33.5993 40.5481 35.864 39.5822 37.7243 37.9981C39.7868 36.2209 41 34.0186 41 31.855V27.5277C41 26.8709 40.4743 26.3687 39.7868 26.3687Z"
+              fill="white"
+            />
+          </svg>
+        </button>
+        <span class="input" contenteditable="true"></span>
+      </div>
     </div>
 
-    <p><button id="summarize">↓ Generate summary ↓</button></p>
+    <!-- <p><button id="summarize">↓ Generate summary ↓</button></p>
 
-    <div class="text" id="summary"></div>
+    <div class="text" id="summary"></div> -->
 
-    <p><i>Only tested in Chrome</i></p>
+    <div id="tag-container" class="tag-container"></div>
   </body>
-
 </html>
