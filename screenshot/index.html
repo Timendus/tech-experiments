@@ -33,6 +33,9 @@
       font-weight: bold;
       margin-right: 8px;
     }
+    .button.button-green {
+      background: green;
+    }
     .main {
       margin: 50px auto;
       padding: 20px;
@@ -42,8 +45,8 @@
       border-radius: 8px;
     }
     dialog {
-      background: lightcyan;
-      border: solid 1px cyan;
+      background: white;
+      border: solid 1px whitesmoke;
       border-radius: 8px;
       margin: auto;
       max-height: 80%;
@@ -54,6 +57,16 @@
       flex-direction: column;
       align-items: stretch;
       margin: 10px 0;
+    }
+    .group.buttons {
+      flex-direction: row;
+      align-items: normal;
+      justify-content: space-between;
+    }
+    img#preview {
+      width: 400px;
+      margin: 0 auto;
+      max-width: 100%;
     }
     .blurry {
       position: relative;
@@ -71,6 +84,9 @@
       width: 100%;
       height: 100%;
     }
+    .hidden {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -81,20 +97,26 @@
         <label for="comment">Reactie</label>
         <textarea name="comment" id="comment" cols="80" rows="4"></textarea>
       </div>
-      <button onclick="screenshot();" class="button">Screenshot</button>
-      <button type="submit" class="button">Verstuur</button>
+      <div class="group buttons">
+        <button onclick="screenshot();" class="button">Voeg screenshot toe</button>
+        <button type="submit" class="button button-green">Verstuur</button>
+      </div>
+      <div class="group hidden" id="preview-group">
+        <img id="preview" src="">
+        <input type="file" name="attachment" id="screenshot-file" class="hidden" />
+      </div>
     </form>
   </dialog>
 
   <dialog id="blurScreenshot">
     <form method="dialog" enctype="multipart/form-data">
       <h2>Geef de focus aan</h2>
+      <p>Selecteer het gedeelte van de afbeelding dat je niet wilt vervagen. Dit kan je doen door met je muis over de afbeelding te slepen.</p>
       <div class="blurry group">
         <img id="myScreenshot" class="screenshot-canvas" src="" alt="">
         <canvas id="canvas"></canvas>
       </div>
-      <input type="file" name="attachment" id="plaatje" />
-      <button type="submit" class="button">Klaar</button>
+      <button type="submit" class="button" onclick="document.getElementById('feedback').showModal();">Klaar</button>
     </form>
   </dialog>
 
@@ -243,11 +265,16 @@
         );
       }
 
+      // Set the image to the file input
       const blob = await canvasToBlob(canvas, "image/png");
       const file = new File([blob], "image.png");
       const dataTransfer = new DataTransfer();
       dataTransfer.items.add(file);
-      document.getElementById("plaatje").files = dataTransfer.files;
+      document.getElementById("screenshot-file").files = dataTransfer.files;
+
+      // Show preview
+      document.getElementById("preview").src = URL.createObjectURL(file);
+      document.getElementById("preview-group").classList.remove('hidden');
     }
   }
 </script>
