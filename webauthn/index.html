@@ -3,9 +3,54 @@
     <title>WebAuthN demo</title>
     <style>
       * { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
-      input {
-        width: 100%;
-        padding: 4px 8px;;
+      html, body {
+        margin: 0;
+        background-color: royalblue;
+      }
+      section {
+        min-height: 100vh;
+        max-width: 1200px;
+        margin: 0 auto;
+        background-color: white;
+        padding: 1em;
+        box-shadow: 1px 1px 14px #686868;
+      }
+      div#overlay {
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        background-color: rgba(0,0,0,0.3);
+        backdrop-filter: blur(4px);
+      }
+      section#login {
+        position: fixed;
+        top: 40%;
+        left: 50%;
+        margin-left: -300px;
+        width: 600px;
+        margin-top: -100px;
+        min-height: auto;
+        height: 200px;
+        border: 3px solid gray;
+        border-radius: 1em;
+        padding: 1em;
+        background-color: white;
+      }
+      .hide {
+        display: none;
+      }
+      label {
+        display: block;
+        margin: 1em;
+      }
+      input, textarea {
+        width: 1000px;
+        max-width: 90%;
+        margin: 0 2em;
+        padding: 4px 8px;
+        vertical-align: top;
       }
       button {
         min-width: 160px;
@@ -16,129 +61,50 @@
         color: white;
         font-weight: bold;
         margin-right: 8px;
+        cursor: pointer;
       }
       button.red { background: red; }
       button.green { background: green; }
     </style>
+    <script type="text/javascript" src="./index.js"></script>
   </head>
+
   <body>
-    <h1>WebAuthN demo</h1>
-    <p>Je kan nu 1 hardware security token hier registreren...</p>
-    <p>
-      <input type="text" id="credential" placeholder="Hardware token" />
-    </p>
-    <p>
-      <button onclick="registerToken();">registreer</button>
-      <button id="validator" onclick="validateToken();">controleer</button>
-    </p>
+    <div id="overlay">
+      <section id="login">
+        <h1>Your session has been locked and encrypted</h1>
+        <p>For your security, blabiblaat</p>
+        <button id="login-password">Unlock with password</button>
+        <button id="login-token">Unlock with security key</button>
+      </section>
+    </div>
+    <section id="page">
+      <h1>Super Secret Patient Records</h1>
+      <p>Totally awesome, don't tell anyone!</p>
+
+      <label>
+        Patient name
+        <input id="patient-name" name="" value="">
+      </label>
+
+      <label>
+        Patient history
+        <textarea id="patient-history" rows="8" cols="80"></textarea>
+      </label>
+
+      <p>
+        <button id="save">Save</button>
+      </p>
+
+      <div class="hide">
+        <p>
+          <input type="text" id="credential" placeholder="Hardware token" />
+        </p>
+        <p>
+          <button id="registrator">registreer</button>
+          <button id="validator">controleer</button>
+        </p>
+      </div>
+    </section>
   </body>
 </html>
-
-<script>
-  const username = "starfishy";
-  const challenge =  stringToArrayBuffer("abcdefgh");
-  const timeout = 60 * 4 * 1000;
-
-  function stringToArrayBuffer(str) {
-    const encoder = new TextEncoder();
-    return encoder.encode(str);
-  }
-
-  function stringToArrayBuffer(str) {
-    const encoder = new TextEncoder();
-    return encoder.encode(str);
-  }
-
-  function decodeBase64(base64) {
-    return Uint8Array.from(JSON.parse(base64));
-  }
-
-  function encodeBase64(buffer) {
-    JSON.stringify(buffer);
-  }
-
-  function decodeBase64(baseurl64String) {
-    // Base64url to Base64
-    const padding = "==".slice(0, (4 - (baseurl64String.length % 4)) % 4);
-    const base64String =
-      baseurl64String.replace(/-/g, "+").replace(/_/g, "/") + padding;
-
-    // Base64 to binary string
-    const str = atob(base64String);
-
-    // Binary string to buffer
-    const buffer = new ArrayBuffer(str.length);
-    const byteView = new Uint8Array(buffer);
-    for (let i = 0; i < str.length; i++) {
-      byteView[i] = str.charCodeAt(i);
-    }
-    return buffer;
-  }
-
-  function encodeBase64(buffer) {
-    // Buffer to binary string
-    const byteView = new Uint8Array(buffer);
-    let str = "";
-    for (const charCode of byteView) {
-      str += String.fromCharCode(charCode);
-    }
-
-    // Binary string to base64
-    const base64String = btoa(str);
-
-    // Base64 to base64url
-    // We assume that the base64url string is well-formed.
-    const base64urlString = base64String
-      .replace(/\+/g, "-")
-      .replace(/\//g, "_")
-      .replace(/=/g, "");
-    return base64urlString;
-  }
-
-  async function registerToken() {
-    const registerResult = await window.navigator.credentials.create({
-      publicKey: {
-        rp: {
-          id: window.location.hostname,
-          name: window.location.hostname,
-        },
-        user: {
-          displayName: username,
-          id: stringToArrayBuffer(username),
-          name: username,
-        },
-        challenge: challenge,
-        pubKeyCredParams: [
-          { type: "public-key", alg: -7 },
-          { type: "public-key", alg: -257 },
-        ],
-        timeout: timeout,
-        attestation: "none",
-      },
-    });
-    document.getElementById('credential').value = encodeBase64(registerResult.rawId);
-  }
-  
-  async function validateToken() {
-    const credential = decodeBase64(
-      document.getElementById('credential').value
-    );
-    const validateResult = await window.navigator.credentials.get({
-      publicKey: {
-        challenge: challenge,
-        timeout: timeout,
-        allowCredentials: [{
-          type: 'public-key',
-          id: credential
-        }],
-      }
-    });
-    if(validateResult.id == document.getElementById('credential').value) {
-      document.getElementById('validator').classList.add('green');
-      document.getElementById('validator').classList.remove('red');
-    } else {
-      document.getElementById('validator').classList.add('red');
-      document.getElementById('validator').classList.remove('green');
-    }
-  }
-</script>
