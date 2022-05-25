@@ -21,20 +21,13 @@ function updatePage() {
   const page = path
     .reduce((page, segment) => page?.children?.find(child => child.id?.toString() === segment), database);
 
-  document.body.innerHTML = stringifyHtml(
-    page
-    ? renderPage({ page, path })
-    : renderPageNotFound()
-  );
+  document.body.innerHTML = page
+    ? renderPage(page)
+    : renderPageNotFound();
 }
 
-function urlFromPath(path) {
-  return `#/${path.join('/')}`;
-}
-
-function renderPage({ page, path }) {
+function renderPage(page) {
   const { id, name, content, children, links, sticker } = page;
-
   return html`
     <main class="article-page">
       <header>
@@ -45,17 +38,14 @@ function renderPage({ page, path }) {
         </form>
       </header>
       <section class="content">
-        ${renderBreadcrumb({ path, root: database })}
         <h1>${name}</h1>
         ${renderMarkdown(content)}
         ${children && html`
           <ul class="child-articles">
             ${children.map(({ id, name, content }) => html`
               <li>
-                <a href=${urlFromPath([...path, id])}>
-                  <h2>${name}</h2>
-                  ${renderMarkdown(content)}
-                </a>
+                <h2>${name}</h2>
+                ${renderMarkdown(content)}
               </li>
             `)}
           </ul>
@@ -76,9 +66,7 @@ function renderPage({ page, path }) {
           <section class="links">
             <h1>Meer lezen</h1>
             <ul>
-              ${links.map(link => html`
-                <li><a href=${link.url}>${name}</a></li>
-              `)}
+              <li><a href="#">Dingen</a></li>
             </ul>
           </section>
         `}
@@ -146,54 +134,5 @@ function stringifyValue(value) {
     return value.join('\n');
   } else {
     return value.toString();
-  }
-}
-
-function renderBreadcrumb({ path, root }) {
-  const { pages } = path
-    .reduce(({ parentPage, pages }, id) => {
-        const currentPage = parentPage.children.find(page => page.id === id);
-        return {
-          parentPage: currentPage,
-          pages: [
-            ...pages,
-            currentPage
-          ]
-        }
-      },
-      { parentPage: root, pages: [] }
-    );
-  const items = pages.map(page => {
-    console.log({ page, pages });
-    const path = [...takeWhile(pathPage => pathPage !== page, pages), page]
-      .map(page => page.id);
-    return html`
-      <li>
-        <a href=${urlFromPath(path)}>
-          ${page.name}
-        </a>
-      </li>
-    `
-  });
-
-  return html`
-    <ul class="breadcrumb">
-      <li>
-        <a href="#">
-          Home
-        </a>
-      </li>
-      ${items}
-    </ul>
-  `
-}
-
-function* takeWhile(fn, xs) {
-  for (let x of xs) {
-    if (fn(x)) {
-      yield x;
-    } else {
-      break;
-    }
   }
 }
