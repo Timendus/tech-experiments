@@ -22,8 +22,12 @@ function updatePage() {
     .reduce((page, segment) => page?.children?.find(child => child.id?.toString() === segment), database);
 
   document.body.innerHTML = page
-    ? renderPage(page)
+    ? renderPage({ page, path })
     : renderPageNotFound();
+}
+
+function urlFromPath(path) {
+  return `#/${path.join('/')}`;
 }
 
 function renderPage(page) {
@@ -61,6 +65,21 @@ function renderPage(page) {
         <section class="share">
           <p><button>Deel dit!</button></p>
         </section>
+
+        ${children && html`
+          <section id="child-articles">
+            <ul>
+              ${children.map(({ id, name, content }) => html`
+                <li>
+                  <a href=${urlFromPath([...path, id])}>
+                    <h2>${name}</h2>
+                    ${renderMarkdown(content)}
+                  </a>
+                </li>
+              `)}
+            </ul>
+          </section>
+        `}
 
         ${links && html`
           <section class="links">
