@@ -1,3 +1,5 @@
+import { marked } from 'marked'
+
 let database;
 
 run();
@@ -62,13 +64,7 @@ function renderPageNotFound() {
 }
 
 function renderMarkdown(markdown) {
-  if (markdown === undefined) {
-    throw new Error('text is undefined');
-  }
-  return markdown
-    .split('\n\n')
-    .map(paragraph => html`<p>${renderText(paragraph)}</p>`)
-    .join('\n');
+  return marked.parse(markdown);
 }
 
 function renderText(text) {
