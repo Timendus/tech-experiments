@@ -6,9 +6,31 @@ let database;
 let fuse;
 run();
 
+function preprocessNode({ path, node, parent }) {
+  node.path = path;
+  node.url = urlFromPath(path);
+  node.parent = parent;
+  if (node.children) {
+    for (const child of node.children) {
+      preprocessNode({
+        path: [...path, child.id],
+        node: child,
+        parent: node
+      });
+    }
+  }
+  return node;
+}
+
 async function run() {
   database = await fetch('./database.json').then(response => response.json());
-  console.log(findSearchKeysRecurse(database))
+
+  database = preprocessNode({
+    path: [],
+    node: database,
+    parent: null
+  });
+
   const fuseOptions = {
     includeMatches: true,
     keys: findSearchKeysRecurse(database)
@@ -32,7 +54,7 @@ function updatePage() {
 
   document.body.innerHTML = stringifyHtml(
     page
-    ? renderPage({ page, path })
+    ? renderPage(page)
     : renderPageNotFound()
   );
 
@@ -49,9 +71,8 @@ function urlFromPath(path) {
   return `#/${path.join('/')}`;
 }
 
-function renderPage({ page, path }) {
+function renderPage(page) {
   const { id, name, content, children, links, sticker } = page;
-
   return html`
     <main class="article-page">
       <header>
@@ -62,14 +83,14 @@ function renderPage({ page, path }) {
         </form>
       </header>
       <section class="content">
-        ${renderBreadcrumb({ path, root: database })}
+        ${renderBreadcrumb(page)}
         <h1>${name}</h1>
         ${renderMarkdown(content)}
         ${children && html`
           <ul class="child-articles">
-            ${children.map(({ id, name, content }) => html`
+            ${children.map(({ id, name, content, url }) => html`
               <li>
-                <a href=${urlFromPath([...path, id])}>
+                <a href=${url}>
                   <h2>${name}</h2>
                   ${renderMarkdown(content)}
                 </a>
@@ -93,8 +114,8 @@ function renderPage({ page, path }) {
           <section class="links">
             <h1>Meer lezen</h1>
             <ul>
-              ${links.map(link => html`
-                <li><a href=${link.url}>${name}</a></li>
+              ${links.map(({ name, url }) => html`
+                <li><a href=${url}>${name}</a></li>
               `)}
             </ul>
           </section>
@@ -166,51 +187,25 @@ function stringifyValue(value) {
   }
 }
 
-function renderBreadcrumb({ path, root }) {
-  const { pages } = path
-    .reduce(({ parentPage, pages }, id) => {
-        const currentPage = parentPage.children.find(page => page.id === id);
-        return {
-          parentPage: currentPage,
-          pages: [
-            ...pages,
-            currentPage
-          ]
-        }
-      },
-      { parentPage: root, pages: [] }
-    );
-  const items = pages.map(page => {
-    console.log({ page, pages });
-    const path = [...takeWhile(pathPage => pathPage !== page, pages), page]
-      .map(page => page.id);
-    return html`
+function renderBreadcrumb(page) {
+  const parentItems = parents(page)
+    .map(page => html`
       <li>
-        <a href=${urlFromPath(path)}>
+        <a href=${page.url}>
           ${page.name}
         </a>
       </li>
-    `
-  });
+    `);
 
   return html`
     <ul class="breadcrumb">
-      <li>
-        <a href="#">
-          Home
-        </a>
-      </li>
-      ${items}
+      ${parentItems}
     </ul>
   `
 }
 
-function* takeWhile(fn, xs) {
-  for (let x of xs) {
-    if (fn(x)) {
-      yield x;
-    } else {
-      break;
-    }
-  }
+function parents(node) {
+  return node.parent
+    ? [...parents(node.parent), node.parent]
+    : [];
 }
