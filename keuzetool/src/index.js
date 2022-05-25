@@ -22,6 +22,17 @@ function preprocessNode({ path, node, parent }) {
   return node;
 }
 
+function flattenNode(node) {
+  return [
+    node,
+    ...(
+      node.children
+        ? node.children.flatMap(flattenNode)
+        : []
+    )
+  ]
+}
+
 async function run() {
   database = await fetch('./database.json').then(response => response.json());
 
@@ -31,11 +42,10 @@ async function run() {
     parent: null
   });
 
-  const fuseOptions = {
+  fuse = new Fuse(flattenNode(database), {
     includeMatches: true,
-    keys: findSearchKeysRecurse(database)
-  };
-  fuse = new Fuse(database, fuseOptions);
+    keys: ['name', 'content']
+  });
 
   window.addEventListener('hashchange', () => {
     updatePage();
