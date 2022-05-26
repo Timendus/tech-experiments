@@ -1,7 +1,9 @@
+import Fuse from 'fuse.js'
+import { findSearchKeysRecurse } from './helper.js';
 import { marked } from 'marked'
 
 let database;
-
+let fuse;
 run();
 
 function preprocessNode({ path, node, parent }) {
@@ -20,13 +22,31 @@ function preprocessNode({ path, node, parent }) {
   return node;
 }
 
+function flattenNode(node) {
+  return [
+    node,
+    ...(
+      node.children
+        ? node.children.flatMap(flattenNode)
+        : []
+    )
+  ]
+}
+
 async function run() {
   database = await fetch('./database.json').then(response => response.json());
+
   database = preprocessNode({
     path: [],
     node: database,
     parent: null
   });
+
+  fuse = new Fuse(flattenNode(database), {
+    includeMatches: true,
+    keys: ['name', 'content']
+  });
+
   window.addEventListener('hashchange', () => {
     updatePage();
   }, true);
@@ -47,6 +67,14 @@ function updatePage() {
     ? renderPage(page)
     : renderPageNotFound()
   );
+
+  let searchElement = document.getElementById('js-search');
+
+
+  searchElement.oninput = (event) => {
+    let result = fuse.search(event.target.value)
+    console.log('result: ', result)
+  }
 }
 
 function urlFromPath(path) {
@@ -60,7 +88,7 @@ function renderPage(page) {
       <header>
         <h1>Moetikhierdehuisartsmeelastigvallen.nl</h1>
         <form id="search">
-          <input type="text" name="" value="" placeholder="Wat is uw behoefte?" />
+          <input id="js-search" type="text" name="" value="" placeholder="Wat is uw behoefte?" />
           <button type="submit">Zoek</button>
         </form>
       </header>
