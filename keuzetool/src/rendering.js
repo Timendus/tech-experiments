@@ -117,23 +117,33 @@ function renderPageNotFound() {
   `
 }
 
+function renderSearchModal() {
+  return html`
+    <section class="search-modal">
+      <form>
+        <input type="text" autocomplete="off" placeholder="Zoeken op onderwerp"/>
+        <button class="close">Close dialog</button>
+      </form>
+      <ul></ul>
+    </section>
+  `;
+}
+
 function renderSearchResults(results) {
   return html`
-    <ul>
-      ${results ? results.map(({ item, matches }) => {
-        item = highlightMatches(item, matches);
-        return html`
-          <li>
-            <a href="${item.url}">
-              <h1>${new Html(item.name)}</h1>
-              ${renderMarkdown(item.content ?? item.blurb)}
-            </a>
-          </li>
-        `
-      }) : html`
-        <li class="not-found">No results found</li>
-      `}
-    </ul>
+    ${results ? results.map(({ item, matches }) => {
+      item = highlightMatches(item, matches);
+      return html`
+        <li>
+          <a href="${item.url}">
+            <h1>${new Html(item.name)}</h1>
+            ${renderMarkdown(item.content ?? item.blurb)}
+          </a>
+        </li>
+      `
+    }) : html`
+      <li class="not-found">No results found</li>
+    `}
   `;
 }
 
@@ -163,12 +173,24 @@ function highlightMatches(item, matches) {
   }), item);
 }
 
-function renderShareModal({ title, url, text }) {
+function renderShareModal({ title, url, fullURL }) {
+  const escapedURL = encodeURIComponent(fullURL);
   return html`
-    <h1>Deel dit artikel</h1>
-    <h2>${title}</h2>
-    ${text ? html`<p>${text}</p>` : ''}
-    <p><a href="${url}">${window.location.origin}/${url}</a></p>
+    <section class="share-modal">
+      <button class="close">Close dialog</button>
+      <h1>Delen</h1>
+      <ul>
+        <li><a class="twitter" href='https://twitter.com/share?text=Aambeien&url=${escapedURL}'>Twitter</a></li>
+        <li><a class="facebook" href='https://www.facebook.com/sharer.php?u=${escapedURL}'>Facebook</a></li>
+        <li><a class="whatsapp" href='https://web.whatsapp.com/send?text=${title}%20${escapedURL}'>WhatsApp</a></li>
+        <li><a class="e-mail" href='mailto:?subject=${title}&body=${title}${encodeURIComponent("\n\n")}${escapedURL}'>E-mail</a></li>
+      </ul>
+      <p>Link kopiëren</p>
+      <div class="share-url">
+        <span>${fullURL}</span>
+        <button>Copy to clipboard</button>
+      </div>
+    </section>
   `;
 }
 
@@ -280,6 +302,7 @@ module.exports = {
   renderPage,
   renderFrontPage,
   renderPageNotFound,
+  renderSearchModal,
   renderSearchResults,
   renderShareModal,
   stringifyHtml

@@ -1,7 +1,7 @@
 import {
   initSearch,
   findSearchKeysRecurse,
-  handleSearch
+  openSearch
 } from './search.js';
 
 import {
@@ -12,11 +12,17 @@ import {
   stringifyHtml
 } from './rendering.js';
 
+import {
+  openModal,
+  closeModal
+} from './modals.js';
+
 let database;
 run();
 
 async function run() {
   setDeviceClass();
+  attachKeyboardHandler();
   database = await fetch('./database.json').then(response => response.json());
 
   database = preprocessNode({
@@ -64,7 +70,8 @@ function updatePage() {
     : renderPageNotFound()
   );
 
-  document.getElementById('js-search').addEventListener('input', handleSearch);
+  document.getElementById('js-search').addEventListener('click', openSearch);
+  document.getElementById('js-search').addEventListener('focus', openSearch);
   document.getElementById('share').addEventListener('click', sharePage);
   window.scrollTo(0,0);
 }
@@ -72,15 +79,14 @@ function updatePage() {
 function sharePage(event) {
   // Use native share dialog if present
   if ( navigator.share ) return navigator.share(event.target.dataset);
-
   // Otherwise show our own modal
-  const shareModal = document.querySelector('.share-modal')
-    || document.createElement('div');
-  shareModal.classList.add('share-modal');
-  shareModal.innerHTML = stringifyHtml(
-    renderShareModal(event.target.dataset)
-  );
-  document.body.appendChild(shareModal);
+  const fullURL = window.location.origin + window.location.pathname + event.target.dataset.url;
+  openModal(renderShareModal({...event.target.dataset, fullURL}));
+  document.querySelector('.share-url button').addEventListener('click', () => {
+    navigator.clipboard.writeText(fullURL).then(() => {
+      document.querySelector('.share-url').classList.add('shared');
+    });
+  });
 }
 
 function urlFromPath(path) {
@@ -91,4 +97,11 @@ function setDeviceClass() {
   const userAgent = navigator.userAgent || navigator.vendor || window.opera;
   if (/android/i.test(userAgent)) document.body.classList.add('android');
   if (/iPad|iPhone|iPod/i.test(userAgent) && !window.MSStream) document.body.classList.add('ios');
+}
+
+function attachKeyboardHandler() {
+  document.addEventListener('keyup', event => {
+    if ( event.key !== "Escape" ) return;
+    if ( !closeModal() ) openSearch();
+  });
 }
