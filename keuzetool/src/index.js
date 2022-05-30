@@ -72,7 +72,7 @@ function updatePage() {
 
   document.getElementById('js-search').addEventListener('click', openSearch);
   document.getElementById('js-search').addEventListener('focus', openSearch);
-  document.getElementById('share').addEventListener('click', sharePage);
+  document.getElementById('share')?.addEventListener('click', sharePage);
   window.scrollTo(0,0);
 }
 
