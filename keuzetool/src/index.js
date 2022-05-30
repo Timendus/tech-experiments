@@ -15,23 +15,8 @@ import {
 let database;
 run();
 
-function preprocessNode({ path, node, parent }) {
-  node.path = path;
-  node.url = urlFromPath(path);
-  node.parent = parent;
-  if (node.children) {
-    for (const child of node.children) {
-      preprocessNode({
-        path: [...path, child.id],
-        node: child,
-        parent: node
-      });
-    }
-  }
-  return node;
-}
-
 async function run() {
+  setDeviceClass();
   database = await fetch('./database.json').then(response => response.json());
 
   database = preprocessNode({
@@ -46,6 +31,22 @@ async function run() {
     updatePage();
   }, true);
   updatePage();
+}
+
+function preprocessNode({ path, node, parent }) {
+  node.path = path;
+  node.url = urlFromPath(path);
+  node.parent = parent;
+  if (node.children) {
+    for (const child of node.children) {
+      preprocessNode({
+        path: [...path, child.id],
+        node: child,
+        parent: node
+      });
+    }
+  }
+  return node;
 }
 
 function updatePage() {
@@ -84,4 +85,10 @@ function sharePage(event) {
 
 function urlFromPath(path) {
   return `#/${path.join('/')}`;
+}
+
+function setDeviceClass() {
+  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+  if (/android/i.test(userAgent)) document.body.classList.add('android');
+  if (/iPad|iPhone|iPod/i.test(userAgent) && !window.MSStream) document.body.classList.add('ios');
 }
