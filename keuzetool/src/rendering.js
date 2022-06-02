@@ -169,20 +169,10 @@ function highlightIndices(text, indices) {
   ].join('');
 }
 
-function filterWholeWordIndices(text, indices) {
-  const isAlphanumeric = c => /\w/.test(c);
-  return indices.filter(([start, end]) =>
-    // Beginning of word
-    !isAlphanumeric(text[start - 1]) && isAlphanumeric(text[start]) &&
-    // Ending of word
-    !isAlphanumeric(text[end + 1]) && isAlphanumeric(text[end])
-  );
-}
-
 function highlightMatches(item, matches) {
   return matches.reduce((item, match) => {
     const text = match.value;
-    const indices = filterWholeWordIndices(text, match.indices);
+    const indices = match.indices.filter(([start, end]) => (end - start) > 1);
     return {
       ...item,
       [match.key]: highlightIndices(text, indices)
