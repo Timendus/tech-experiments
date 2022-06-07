@@ -55,7 +55,8 @@ function preprocessNode({ path, node, parent }) {
   return node;
 }
 
-function updatePage() {
+async function updatePage() {
+  await closeAllModals();
   const path = document.location.hash
     .replace(/^[#\/]*/g, '')
     .split('/')
@@ -100,8 +101,8 @@ function setDeviceClass() {
 }
 
 function attachKeyboardHandler() {
-  document.addEventListener('keyup', event => {
+  document.addEventListener('keyup', async event => {
     if ( event.key !== "Escape" ) return;
-    if ( closeAllModals() == 0 ) openSearch();
+    if ( await closeAllModals() == 0 ) openSearch();
   });
 }
