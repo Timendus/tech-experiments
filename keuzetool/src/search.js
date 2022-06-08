@@ -1,6 +1,6 @@
 const Fuse = require('fuse.js/dist/fuse.common');
 const {
-  openModal
+  SearchModal
 } = require('./modals.js');
 const {
   renderSearchModal,
@@ -69,8 +69,8 @@ function initSearch(database) {
   });
 }
 
-function openSearch(event) {
-  openModal(renderSearchModal());
+function openSearch() {
+  new SearchModal(renderSearchModal()).open();
   const resultList = document.querySelector('.search-modal ul');
   const newInput = document.querySelector('.search-modal input');
   newInput.addEventListener('input', event => {
@@ -78,10 +78,9 @@ function openSearch(event) {
       stringifyHtml(renderSearchResults(fuse.search(event.target.value)));
   });
   newInput.addEventListener('keydown', event => {
-    if ( event.key === "Enter" ) {
-      const firstLinkInResultList = resultList.querySelector('a');
-      if ( firstLinkInResultList ) firstLinkInResultList.click();
-    }
+    if ( event.key === "Enter" )
+      ( resultList.querySelector('a:hover') ||
+        resultList.querySelector('a') )?.click();
   });
   newInput.focus();
 }

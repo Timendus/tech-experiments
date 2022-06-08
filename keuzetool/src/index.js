@@ -13,8 +13,8 @@ import {
 } from './rendering.js';
 
 import {
-  openModal,
-  closeModal
+  ShareModal,
+  closeAllModals
 } from './modals.js';
 
 let database;
@@ -55,7 +55,8 @@ function preprocessNode({ path, node, parent }) {
   return node;
 }
 
-function updatePage() {
+async function updatePage() {
+  await closeAllModals();
   const path = document.location.hash
     .replace(/^[#\/]*/g, '')
     .split('/')
@@ -81,7 +82,7 @@ function sharePage(event) {
   if ( navigator.share ) return navigator.share(event.target.dataset);
   // Otherwise show our own modal
   const fullURL = window.location.origin + window.location.pathname + event.target.dataset.url;
-  openModal(renderShareModal({...event.target.dataset, fullURL}));
+  new ShareModal(renderShareModal({...event.target.dataset, fullURL})).open();
   document.querySelector('.share-url button').addEventListener('click', () => {
     navigator.clipboard.writeText(fullURL).then(() => {
       document.querySelector('.share-url').classList.add('shared');
@@ -100,8 +101,8 @@ function setDeviceClass() {
 }
 
 function attachKeyboardHandler() {
-  document.addEventListener('keyup', event => {
+  document.addEventListener('keyup', async event => {
     if ( event.key !== "Escape" ) return;
-    if ( !closeModal() ) openSearch();
+    if ( await closeAllModals() == 0 ) openSearch();
   });
 }
