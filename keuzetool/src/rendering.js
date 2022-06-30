@@ -44,7 +44,7 @@ function renderPage(page) {
               <p class=${`sticker ${sticker ? 'yes' : 'no'}`}>
                 ${sticker
                   ? 'Je hebt de hulp van de huisarts nodig'
-                  : 'De huisarts hoeft hier niet bij betrokken te worden'
+                  : 'De huisarts hoeft hier niet (verder) bij betrokken te worden'
                 }
               </p>
             ` : ''}
