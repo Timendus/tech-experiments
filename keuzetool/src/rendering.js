@@ -5,12 +5,7 @@ function renderFrontPage(page) {
   return html`
     <main class="front-page">
       <nav>
-        <h1><a href="#">EHBDoorverwijzen</a></h1>
-        <ul>
-          <li><a href="#">Home</a></li>
-          <li><a href="#">Over EHBD</a></li>
-          <li><a href="#">Artikelen</a></li>
-        </ul>
+        ${renderNavigation()}
         <form></form>
       </nav>
       <header>
@@ -20,9 +15,9 @@ function renderFrontPage(page) {
           <input class="search large" type="text" name="" value="" autocomplete="off" placeholder="Zoeken op onderwerp" />
         </form>
       </header>
-      <section class="content">
+      <section class="content" id="artikelen">
         ${renderChildren(page)}
-        <h1 class="under-striped">${name}</h1>
+        <h1 class="under-striped" id="over-ons">${name}</h1>
         ${renderMarkdown(content)}
       </section>
       <footer></footer>
@@ -35,12 +30,7 @@ function renderPage(page) {
   return html`
     <main class="article-page">
       <nav>
-        <h1><a href="#">EHBDoorverwijzen</a></h1>
-        <ul>
-          <li><a href="#">Home</a></li>
-          <li><a href="#">Over EHBD</a></li>
-          <li><a href="#">Artikelen</a></li>
-        </ul>
+        ${renderNavigation()}
         <form id="search">
           <input class="search" type="text" name="" value="" autocomplete="off" placeholder="Zoeken op onderwerp" />
         </form>
@@ -86,34 +76,44 @@ function renderPage(page) {
 
 function renderPageNotFound() {
   return html`
-    <main class="article-page">
+    <main class="article-page err-404-not-found">
       <nav>
-        <h1><a href="#">EHBDoorverwijzen</a></h1>
-        <ul>
-          <li><a href="#">Home</a></li>
-          <li><a href="#">Over EHBD</a></li>
-          <li><a href="#">Artikelen</a></li>
-        </ul>
+        ${renderNavigation()}
         <form id="search">
-          <input id="js-search" type="text" name="" value="" placeholder="Zoeken op onderwerp" />
+          <input class="search" type="text" name="" value="" autocomplete="off" placeholder="Zoeken op onderwerp" />
         </form>
       </nav>
       <section class="content">
         <ul class="breadcrumbs">
           <li><a href="#">Home</a></li>
-          <li><a href="#">Pagina niet gevonden</a></li>
+          <li><a href="#">404 error</a></li>
         </ul>
         <section class="two-column">
           <div class="column">
-            <h1>Pagina niet gevonden</h1>
+            <h1>We kunnen de pagina niet vinden</h1>
             <p>De link die je gevolgd hebt leidt naar een pagina die niet (meer) bestaat.</p>
-            <p>Sorry! Hopelijk kom je eruit met de zoekfunctie hierboven?</p>
+            <p>Sorry! Hopelijk kom je eruit met de zoekfunctie hierboven? Probeer anders één van deze opties:</p>
+            <p>
+              <a class="button back" href="javascript:history.go(-1)">Ga terug</a>
+              <a class="button home" href="#">Naar Home</a>
+            </p>
           </div>
         </section>
       </section>
       <footer></footer>
     </main>
   `
+}
+
+function renderNavigation() {
+  return html`
+    <h1><a href="#">EHBDoorverwijzen</a></h1>
+    <ul>
+      <li><a href="#">Home</a></li>
+      <li><a href="#over-ons">Over EHBD</a></li>
+      <li><a href="#artikelen">Artikelen</a></li>
+    </ul>
+  `;
 }
 
 function renderSearchModal() {
