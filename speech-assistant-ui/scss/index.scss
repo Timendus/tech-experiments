@@ -108,8 +108,8 @@ nav {
   }
   .conversation {
     flex: 3 1 40%;
-    padding: 10px;
-    max-height: calc(100vh - 140px);
+    padding: 10px 10px 100px;
+    max-height: calc(100vh - 120px);
     overflow-y: scroll;
 
     background-color: $white-teal;
