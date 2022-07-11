@@ -5,6 +5,7 @@ $pale-teal: #8fd0ba;
 $teal-bayou: #57a1a0;
 $light-teal: #cdeae0;
 $white-teal: #f3faf7;
+$reddish: #8e0000;
 
 * {
   box-sizing: border-box;
@@ -51,6 +52,7 @@ nav {
     flex: 1 0 20%;
     background-color: $light-teal;
     border-right: 1px solid $pale-teal;
+    overflow-y: scroll;
 
     ul {
       list-style: none;
@@ -90,11 +92,16 @@ nav {
 
           border: solid 1px $light-teal;
           border-radius: 12px;
-          background: $pale-teal;
+          background: $teal;
+          color: $light-teal;
 
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
+
+          &.intervention {
+            background: $reddish;
+          }
         }
       }
     }
@@ -102,6 +109,8 @@ nav {
   .conversation {
     flex: 3 1 40%;
     padding: 10px;
+    max-height: calc(100vh - 140px);
+    overflow-y: scroll;
 
     background-color: $white-teal;
     color: $deep-teal;
@@ -130,20 +139,45 @@ nav {
       &.computer {
         margin-left: 40px;
         margin-right: 0;
-
-        .text {
-          background-color: $pale-teal;
-        }
       }
       &.caller {
         margin-left: 0;
         margin-right: 40px;
+
+        .text {
+          background-color: $pale-teal;
+        }
       }
     }
   }
   .dossier {
     flex: 3 1 40%;
     background-color: $pale-teal;
+    color: $deep-teal;
+
+    .patient {
+      padding: 20px 10px;
+      border-bottom: 2px solid $light-teal;
+
+      .name {
+        font-size: 1.5em;
+        font-weight: bold;
+      }
+    }
+
+    .details {
+      margin: 20px;
+      padding: 10px;
+      background: $light-teal;
+      border-radius: 10px;
+
+      h3 {
+        margin-bottom: 10px;
+      }
+      ul {
+        margin-left: 20px;
+      }
+    }
   }
 }
 
