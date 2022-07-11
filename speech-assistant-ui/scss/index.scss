@@ -1,65 +1,95 @@
+$teal: #008080;
+$deep-teal: #00555a;
+$dusty-teal: #4c9085;
+$pale-teal: #8fd0ba;
+$teal-bayou: #57a1a0;
+$light-teal: #cdeae0;
+$white-teal: #f3faf7;
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-html, body, main {
+html,
+body,
+main {
   height: 100vh;
 }
 
 main {
   display: flex;
   flex-direction: column;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 nav {
-  background-color: #dc5959;
+  position: fixed;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  height: 60px;
+  padding: 5px 10px;
+
+  background-color: $deep-teal;
   color: white;
-  border-bottom: 1px solid black;
-  box-shadow: 0 0 10px rgba(0,0,0,0.4);
+  border-bottom: 1px solid $dusty-teal;
+  box-shadow: 0 0 20px $dusty-teal;
+  z-index: 10;
 }
 
-.whatsapp {
+.calls {
   display: flex;
+  margin: 60px 0 60px;
   flex: 1 1 auto;
-  background-color: yellow;
 
   .conversation-list {
     flex: 1 1 auto;
-    background-color: white;
-    border-right: 1px solid #EEEEEE;
+    background-color: $light-teal;
+    border-right: 1px solid $pale-teal;
 
     ul {
       list-style: none;
 
       a {
         display: block;
-        width: 100%;
         height: 70px;
-        border-bottom: 1px solid #EEEEEE;
+        border-bottom: 1px solid $pale-teal;
+        color: $deep-teal;
         text-decoration: none;
         padding: 1em;
 
         &:hover {
-          background-color: #EEEEEE;
+          background-color: $pale-teal;
         }
       }
     }
   }
   .conversation {
     flex: 3 1 auto;
-    background-color: #FAFAFA;
+    background-color: $white-teal;
   }
   .dossier {
     flex: 3 1 auto;
-    background-color: green;
+    background-color: $pale-teal;
   }
 }
 
 .current-call {
-  flex: 0 0 100px;
-  background-color: #ffbaba;
-  border-top: 1px solid black;
-  box-shadow: 0 0 5px rgba(0,0,0,0.2);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  padding: 5px 10px;
+
+  background-color: $teal;
+  color: white;
+  border-top: 1px solid $dusty-teal;
+  box-shadow: 0px 0 20px $dusty-teal;
+  z-index: 10;
 }
