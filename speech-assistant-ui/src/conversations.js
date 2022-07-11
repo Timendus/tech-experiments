@@ -7,28 +7,42 @@ module.exports = [
     },
     client: {
       name: "Roald Dijkstra",
-      tags: ["medicatie", "paniek"]
+      tags: [
+        {
+          name: "herhaalrecept",
+          timestamp: 5000
+        },
+        {
+          name: "paniek",
+          timestamp: 20000
+        }
+      ]
     },
     transcript: [
       {
-        timestamp: -2000,
-        text: "Hallo",
+        timestamp: 0,
+        text: "U bent verbonden met Huisartsenpraktijk Grolle. Toets 1 voor spoed of spreek kort in waar u voor belt.",
+        caller: false
+      },
+      {
+        timestamp: 2000,
+        text: "Mijn Valsartan is op, voor mijn hoge bloeddruk",
         caller: true
       },
       {
-        timestamp: -1000,
-        text: "Ik wil graag een herhaalrecept aanvragen",
-        caller: true
+        timestamp: 4000,
+        text: "Er zijn momenteel vijf wachtenden voor u. Mogelijk kan ik u in de tussentijd alvast verder helpen. Klopt het dat u een herhaalrecept wilt aanvragen?",
+        caller: false
       },
       {
-        timestamp: 3000,
-        text: "Mijn valsartan is op",
+        timestamp: 6000,
+        text: "Ja, voor Valsartan",
         caller: true
       },
       {
         timestamp: 8000,
-        text: "Mag ik daar een nieuwe van?",
-        caller: true
+        text: "Voor wie is dit herhaalrecept?",
+        caller: false
       }
     ]
   },
@@ -40,11 +54,16 @@ module.exports = [
     },
     client: {
       name: "Bob van der Linden",
-      tags: ["medicatie", "paniek"]
+      tags: [
+        {
+          name: "wachtrij",
+          timestamp: 20000
+        }
+      ]
     },
     transcript: [
       {
-        timestamp: new Date(),
+        timestamp: 500,
         text: "Hello world"
       }
     ]
@@ -57,11 +76,16 @@ module.exports = [
     },
     client: {
       name: "Yannick Donners",
-      tags: ["medicatie", "paniek"]
+      tags: [
+        {
+          name: "labuitslagen",
+          timestamp: 10000
+        }
+      ]
     },
     transcript: [
       {
-        timestamp: new Date(),
+        timestamp: 2000,
         text: "Hello world"
       }
     ]
@@ -74,11 +98,16 @@ module.exports = [
     },
     client: {
       name: "Tim Franssen",
-      tags: ["medicatie", "paniek"]
+      tags: [
+        {
+          name: "afspraak",
+          timestamp: 5000
+        }
+      ]
     },
     transcript: [
       {
-        timestamp: new Date(),
+        timestamp: 2000,
         text: "Hello world"
       }
     ]

@@ -1,5 +1,5 @@
 const loadTime = new Date();
-const selected = 0;
+let selected = 0;
 const conversations = require('./conversations.js');
 
 function renderList() {
@@ -14,6 +14,11 @@ function renderList() {
       <a href="#">
         ${conv.client.name}
         <span class="timer">${Math.floor(time/60)}:${Math.floor(time%60)}</span>
+        ${
+          conv.client.tags.filter(tag => (conv.meta.start + tag.timestamp) < now)
+                          .map(tag => `<span class='tag'>${tag.name}</span>`)
+                          .join('')
+        }
       </a>`;
     entry.addEventListener('click', () => selected = i);
     list.appendChild(entry);
