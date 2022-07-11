@@ -3,7 +3,7 @@ module.exports = [
   {
     meta: {
       start: -3000,
-      end: 30000
+      end: 120000
     },
     client: {
       name: "Tim Franssen",
@@ -11,6 +11,11 @@ module.exports = [
         {
           name: "herhaalrecept",
           timestamp: 6000
+        },
+        {
+          name: "hulp gewenst",
+          class: "intervention",
+          timestamp: 20000
         }
       ]
     },
@@ -74,6 +79,10 @@ module.exports = [
         timestamp: 25000,
         text: "Dan wens ik u nog een hele fijne dag!",
         caller: false
+      },
+      {
+        timestamp: 25000,
+        choice: [ "Recept doorzetten naar HIS", "Patiënt terugbellen" ]
       }
     ]
   },
