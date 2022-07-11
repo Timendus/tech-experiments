@@ -27,7 +27,7 @@ function renderTranscript() {
   conversations[selected].transcript.filter(msg => msg.timestamp < now)
                                     .forEach(entry => {
     const message = document.createElement('div');
-    const time = new Date(loadTime + entry.timestamp);
+    const time = new Date(+loadTime + entry.timestamp);
     message.classList.add('message')
     message.classList.add(entry.caller ? 'caller' : 'computer')
     message.innerHTML = `<span class='text'>${entry.text}</span><span class='time'>${time.toLocaleTimeString()}</span>`;
