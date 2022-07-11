@@ -40,11 +40,11 @@ function renderTranscript() {
     conv.appendChild(message);
     lastElm = message;
   });
-  lastElm.scrollIntoView({
-    block: 'end',
-    inline: 'nearest',
-    behavior: 'smooth'
-  });
+  // lastElm.scrollIntoView({
+  //   block: 'end',
+  //   inline: 'nearest',
+  //   behavior: 'smooth'
+  // });
 }
 
 function updateTimers() {
