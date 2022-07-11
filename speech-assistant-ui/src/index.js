@@ -12,13 +12,13 @@ function renderList() {
     const time = (now - conv.meta.start)/1000;
     entry.innerHTML = `
       <a href="#">
-        ${conv.client.name}
+        <span class="name">${conv.client.name}</span>
         <span class="timer">${Math.floor(time/60)}:${Math.floor(time%60)}</span>
-        ${
+        <span class="tags">${
           conv.client.tags.filter(tag => (conv.meta.start + tag.timestamp) < now)
                           .map(tag => `<span class='tag'>${tag.name}</span>`)
                           .join('')
-        }
+        }</span>
       </a>`;
     entry.addEventListener('click', () => selected = i);
     list.appendChild(entry);
@@ -29,7 +29,7 @@ function renderTranscript() {
   const conv = document.querySelector('.conversation');
   conv.innerHTML = '';
   const now = new Date() - loadTime;
-  conversations[selected].transcript.filter(msg => msg.timestamp < now)
+  conversations[selected].transcript.filter(msg => (conversations[selected].meta.start + msg.timestamp) < now)
                                     .forEach(entry => {
     const message = document.createElement('div');
     const time = new Date(+loadTime + entry.timestamp);
