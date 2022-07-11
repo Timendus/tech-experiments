@@ -16,7 +16,7 @@ function renderList() {
         <span class="timer">${Math.floor(time/60)}:${Math.floor(time%60)}</span>
         <span class="tags">${
           conv.client.tags.filter(tag => (conv.meta.start + tag.timestamp) < now)
-                          .map(tag => `<span class='tag'>${tag.name}</span>`)
+                          .map(tag => `<span class='tag ${tag.class ? tag.class : ''}'>${tag.name}</span>`)
                           .join('')
         }</span>
       </a>`;
@@ -29,6 +29,7 @@ function renderTranscript() {
   const conv = document.querySelector('.conversation');
   conv.innerHTML = '';
   const now = new Date() - loadTime;
+  let lastElm;
   conversations[selected].transcript.filter(msg => (conversations[selected].meta.start + msg.timestamp) < now)
                                     .forEach(entry => {
     const message = document.createElement('div');
@@ -37,6 +38,12 @@ function renderTranscript() {
     message.classList.add(entry.caller ? 'caller' : 'computer')
     message.innerHTML = `<span class='text'>${entry.text}</span><span class='time'>${time.toLocaleTimeString()}</span>`;
     conv.appendChild(message);
+    lastElm = message;
+  });
+  lastElm.scrollIntoView({
+    block: 'end',
+    inline: 'nearest',
+    behavior: 'smooth'
   });
 }
 
