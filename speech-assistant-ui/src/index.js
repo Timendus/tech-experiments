@@ -36,7 +36,11 @@ function renderTranscript() {
     const time = new Date(+loadTime + entry.timestamp);
     message.classList.add('message')
     message.classList.add(entry.caller ? 'caller' : 'computer')
-    message.innerHTML = `<span class='text'>${entry.text}</span><span class='time'>${time.toLocaleTimeString()}</span>`;
+    if ( entry.text ) {
+      message.innerHTML = `<span class='text'>${entry.text}</span><span class='time'>${time.toLocaleTimeString()}</span>`;
+    } else if (entry.choice) {
+      message.innerHTML = entry.choice.map(c => `<button>${c}</button>`).join('');
+    }
     conv.appendChild(message);
     lastElm = message;
   });
